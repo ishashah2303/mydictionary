@@ -1,24 +1,89 @@
-    <!-- SEARCH.HTML -->
-    <div>
-        <h2 align="center"> {{ results.word | title }} </h2>
-        <br>
-        <p>
-            <b>Meaning: </b>{{results.meaning}}
-        </p>
-        <br>
-        <p>
-        <b>Synonyms: </b>
-    
-        {% for s in main_synonym_list %}
-        <a href="/word?word={{s}}">{{s}}</a>,
-        {% endfor %}
-    </p>
-    <br>
-    <p>
-        <b>Antonyms: </b>
-         {% for a in main_antonym_list %}
-            <a href="/word?word={{a}}">{{a}}</a>,
-        {% endfor %}
-    </p>
-    </div>
-    
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dictionary</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+
+        .card {
+            margin-top: 20px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .card-title {
+            color: #333;
+            font-weight: bold;
+        }
+
+        .card-subtitle {
+            color: #555;
+        }
+
+        .list-group-item {
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    {% if results %}
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title">{{ results.0.word }}</h2>
+                <hr>
+                <div>
+                    <h3 class="card-subtitle mb-3">Phonetic Pronunciation</h3>
+                    {% for phonetic in results.0.phonetics %}
+                        <div class="mb-3">
+                            <p>
+                                <b>Text:</b> {{ phonetic.text }}<br>
+                                {% if phonetic.audio %}
+                                    <b>Audio:</b> <a href="{{ phonetic.audio }}">Listen</a><br>
+                                {% endif %}
+                                <!-- {% if phonetic.sourceUrl %}
+                                    <b>Source URL:</b> <a href="{{ phonetic.sourceUrl }}">Link</a><br>
+                                {% endif %} -->
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div>
+                <hr>
+                <div>
+                    <h3 class="card-subtitle mb-3">Meanings</h3>
+                    {% for meaning in results.0.meanings %}
+                        <div class="mb-4">
+                            <p>
+                                <b>Part of Speech:</b> {{ meaning.partOfSpeech }}<br>
+                                <ol class="list-group list-group-flush">
+                                    {% for definition in meaning.definitions %}
+                                        <li class="list-group-item">
+                                            <b>Definition:</b> {{ definition.definition }}<br>
+                                            {% if definition.example %}
+                                                <b>Example:</b> {{ definition.example }}<br>
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </ol>
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <p>No data available for this word.</p>
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
